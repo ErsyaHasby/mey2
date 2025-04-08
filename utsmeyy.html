@@ -1,0 +1,331 @@
+<!-- Dibuat oleh: Ersya Hasby Satria -->
+<!-- Terakhir diperbaiki: 6 April 2025 - Musik tidak ngulang saat klik ulang -->
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Semangat UTS Meysa!</title>
+    <style>
+        /* CSS dipersingkat agar fokus ke fix */
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #d0f0c0, #fefefe);
+            font-family: 'Comic Sans MS', cursive;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .matcha-cup {
+            width: 150px;
+            height: 200px;
+            margin: 0 auto;
+            background: #a4de8e;
+            border-radius: 80px 80px 20px 20px;
+            position: relative;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        .matcha-cup::before {
+            content: "";
+            position: absolute;
+            top: -30px;
+            left: 20px;
+            width: 110px;
+            height: 30px;
+            background: #83c67b;
+            border-radius: 15px;
+        }
+
+        .eyes {
+            position: absolute;
+            top: 60px;
+            left: 35px;
+            display: flex;
+            gap: 40px;
+        }
+
+        .eye {
+            width: 20px;
+            height: 20px;
+            background: #333;
+            border-radius: 50%;
+        }
+
+        .smile {
+            position: absolute;
+            top: 100px;
+            left: 60px;
+            width: 30px;
+            height: 15px;
+            border-bottom: 5px solid #333;
+            border-radius: 0 0 20px 20px;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-top: 20px;
+            color: #38703e;
+            animation: fadeIn 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #70c174;
+            color: white;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #509f53;
+        }
+
+        #next-screen {
+            display: none;
+            padding: 30px;
+        }
+
+        .kata {
+            opacity: 0;
+            font-size: 1.2em;
+            color: #38703e;
+            animation: munculGerak 1s ease-in-out forwards, gerakLoop 5s ease-in-out infinite alternate;
+            margin: 10px 0;
+        }
+
+        @keyframes munculGerak {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes gerakLoop {
+            0% {
+                transform: translateX(0);
+            }
+
+            50% {
+                transform: translateX(10px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .falling-img {
+            position: absolute;
+            width: 40px;
+            top: -100px;
+            animation: fallDown 6s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes fallDown {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .stars,
+        .falling-img {
+            pointer-events: none;
+        }
+
+        .star {
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+            animation: fall 5s linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                top: -10px;
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 100vh;
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <audio id="bg-music">
+        <source src="https://raw.githubusercontent.com/ErsyaHasby/mey2/main/bjiwku.mp3" type="audio/mpeg" />
+    </audio>
+
+    <div class="container" id="main-screen">
+        <div class="matcha-cup">
+            <div class="eyes">
+                <div class="eye"></div>
+                <div class="eye"></div>
+            </div>
+            <div class="smile"></div>
+        </div>
+        <h1>Semangat UTS nya yaa, Meysaaa</h1>
+        <button id="btn-next">Klik di sini!</button>
+    </div>
+
+    <div class="container" id="next-screen">
+        <div id="kata-wrapper"></div>
+        <button id="btn-again" style="display:none;">Pengen lihat lagi ah~</button>
+    </div>
+
+    <div class="stars" id="stars"></div>
+    <div id="falling-imgs"></div>
+
+    <script>
+        const kataList = [
+            "Semangat belajarnya! 💪🌟",
+            "Fokus, semangat, dan jangan lupa senyum~ 😄",
+            "Selalu cheerfull dimanapun dan kapanpun wkwkw 😄",
+            "Selalu menjadi manusia ter cheerfull sedunia yaaa",
+            "Semangkuyyyyyyy pokonyamahhhh",
+            "Semoga diberikan hasil yang terbaik",
+            "Udah kok, udah gitu ajaa wkwkwk 😜"
+        ];
+
+        const starsContainer = document.getElementById("stars");
+        for (let i = 0; i < 60; i++) {
+            const star = document.createElement("div");
+            star.className = "star";
+            star.style.left = Math.random() * 100 + "vw";
+            star.style.animationDuration = (Math.random() * 2 + 3) + "s";
+            star.style.opacity = Math.random();
+            starsContainer.appendChild(star);
+        }
+
+        const btnNext = document.getElementById("btn-next");
+        const btnAgain = document.getElementById("btn-again");
+        const mainScreen = document.getElementById("main-screen");
+        const nextScreen = document.getElementById("next-screen");
+        const music = document.getElementById("bg-music");
+        const wrapper = document.getElementById("kata-wrapper");
+
+        let firstClick = true;
+
+        btnNext.onclick = () => {
+            mainScreen.style.display = "none";
+            nextScreen.style.display = "block";
+
+            if (firstClick) {
+                music.currentTime = 63;
+                music.play().catch(() => alert("Klik sekali lagi kalau musik belum jalan yaa 🤭"));
+                firstClick = false;
+            }
+
+            munculkanGambarJatuh();
+            tampilkanKataSatuPerSatu();
+        };
+
+        btnAgain.onclick = () => {
+            nextScreen.style.display = "none";
+            mainScreen.style.display = "block";
+        };
+
+        function tampilkanKataSatuPerSatu() {
+            wrapper.innerHTML = "";
+            btnAgain.style.display = "none";
+            kataList.forEach((text, i) => {
+                setTimeout(() => {
+                    const p = document.createElement("p");
+                    p.className = "kata";
+                    p.textContent = text;
+                    wrapper.appendChild(p);
+                    if (i === kataList.length - 1) {
+                        setTimeout(() => btnAgain.style.display = "inline-block", 2000);
+                    }
+                }, i * 5000);
+            });
+        }
+
+        function munculkanGambarJatuh() {
+            const container = document.getElementById("falling-imgs");
+            container.innerHTML = "";
+            const imgs = [
+                "https://raw.githubusercontent.com/ErsyaHasby/mey2/main/bga.png",
+                "https://raw.githubusercontent.com/ErsyaHasby/mey2/main/matc.jpg",
+                "https://raw.githubusercontent.com/ErsyaHasby/mey2/main/lup.png"
+            ];
+            for (let i = 0; i < 30; i++) {
+                const img = document.createElement("img");
+                img.src = imgs[Math.floor(Math.random() * imgs.length)];
+                img.className = "falling-img";
+                img.style.left = Math.random() * 100 + "vw";
+                img.style.animationDelay = Math.random() * 5 + "s";
+                container.appendChild(img);
+            }
+        }
+
+        music.addEventListener("timeupdate", () => {
+            if (music.currentTime >= 140) {
+                music.currentTime = 63;
+                music.play();
+            }
+        });
+    </script>
+</body>
+
+</html>
